@@ -94,6 +94,14 @@ const structure = (S: any) =>
             .schemaType('aboutPage')
             .documentId('aboutPage')
         ),
+      S.listItem()
+        .title('🔒 Privacy Policy')
+        .id('privacyPage')
+        .child(
+          S.document()
+            .schemaType('privacyPage')
+            .documentId('privacyPage')
+        ),
       S.divider(),
 
       // Collections

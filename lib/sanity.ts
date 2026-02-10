@@ -110,6 +110,16 @@ export const queries = {
     whyChooseCards
   }`,
 
+  privacyPage: `*[_type == "privacyPage"][0]{
+    lastUpdated,
+    sections[]{
+      heading,
+      content
+    },
+    contactEmail,
+    companyAddress
+  }`,
+
   // Collections
   teamMembers: `*[_type == "teamMember"] | order(order asc){
     _id,

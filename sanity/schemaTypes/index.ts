@@ -12,6 +12,7 @@ import { contactPage } from './contactPage';
 import { shopPage } from './shopPage';
 import { impactPage } from './impactPage';
 import { missionPage } from './missionPage';
+import { privacyPage } from './privacyPage';
 
 export const schemaTypes = [
   // Singletons
@@ -25,6 +26,7 @@ export const schemaTypes = [
   shopPage,
   impactPage,
   missionPage,
+  privacyPage,
   // Collections
   teamMember,
   product,
@@ -44,4 +46,5 @@ export const singletonTypes = [
   'shopPage',
   'impactPage',
   'missionPage',
+  'privacyPage',
 ];
