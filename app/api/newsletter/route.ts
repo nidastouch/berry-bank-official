@@ -6,14 +6,16 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
+const AGE_RANGES = ['Under 18', '18–24', '25–34', '35–44', '45–54', '55–64', '65+'] as const;
+
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const { firstName, lastName, email, zipCode, phone, ageRange } = await request.json();
 
-    // 1. Validate Email exists
-    if (!email) {
+    // 1. Validate required fields
+    if (!firstName || !lastName || !email || !ageRange) {
       return NextResponse.json(
-        { error: 'Email is required' },
+        { error: 'First name, last name, email, and age range are required.' },
         { status: 400 }
       );
     }
@@ -27,21 +29,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Check configuration
+    // 3. Validate age range
+    if (!AGE_RANGES.includes(ageRange)) {
+      return NextResponse.json(
+        { error: 'Invalid age range' },
+        { status: 400 }
+      );
+    }
+
+    // 4. Validate optional phone format (digits, spaces, dashes, parens, plus)
+    if (phone && !/^[\d\s\-().+]+$/.test(phone)) {
+      return NextResponse.json(
+        { error: 'Invalid phone number format' },
+        { status: 400 }
+      );
+    }
+
+    // 5. Check configuration
     if (!process.env.RESEND_API_KEY) {
-      console.log('Newsletter signup (Resend not configured):', email);
+      console.log('Newsletter signup (Resend not configured):', { firstName, lastName, email, zipCode, phone, ageRange });
       return NextResponse.json({
         success: true,
         message: 'Successfully subscribed (Demo Mode)',
       });
     }
 
-    // 4. Add to Resend Contacts (Step 4 FIXED)
-    // We removed 'audienceId' so this now goes to your Global Contacts
+    // 6. Add to Resend Contacts with metadata
     try {
       const { data, error } = await resend!.contacts.create({
-        email: email,
-        firstName: '', // Optional
+        email,
+        firstName: firstName,
+        lastName: lastName,
         unsubscribed: false,
       });
 
@@ -55,7 +73,7 @@ export async function POST(request: NextRequest) {
       console.error('Could not add to contacts:', contactError);
     }
 
-    // 5. Send Welcome Email
+    // 7. Send Welcome Email
     await resend!.emails.send({
       from: 'Berry Bank <noreply@berrybank.app>',
       to: email,
@@ -73,7 +91,7 @@ export async function POST(request: NextRequest) {
 
               <!-- Headline -->
               <h1 style="color: #FAFAFA; text-align: center; font-size: 28px; margin: 0 0 8px 0;">
-                Welcome to Berry Bank!
+                Welcome, ${firstName}!
               </h1>
               <p style="color: #16A075; text-align: center; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 30px 0;">
                 Latin America's First Green Digital Bank
