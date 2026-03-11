@@ -1,15 +1,19 @@
-import { client, queries } from '@/lib/sanity';
+import { getClient, queries } from '@/lib/sanity';
+import { draftMode } from 'next/headers';
 import { ShopPageClient } from './ShopPageClient';
 
 export const revalidate = 60;
 
 async function getShopData() {
+  const isDraft = (await draftMode()).isEnabled;
+  const sanity = getClient(isDraft);
+
   try {
     const [shopPage, products, companyInfo, siteSettings] = await Promise.all([
-      client.fetch(queries.shopPage),
-      client.fetch(queries.products),
-      client.fetch(queries.companyInfo),
-      client.fetch(queries.siteSettings),
+      sanity.fetch(queries.shopPage),
+      sanity.fetch(queries.products),
+      sanity.fetch(queries.companyInfo),
+      sanity.fetch(queries.siteSettings),
     ]);
     return { shopPage, products, companyInfo, siteSettings };
   } catch (error) {

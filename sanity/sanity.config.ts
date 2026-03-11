@@ -2,6 +2,7 @@
 
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
+import { presentationTool } from 'sanity/presentation';
 import { schemaTypes, singletonTypes } from './schemaTypes';
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
@@ -93,6 +94,13 @@ export default defineConfig({
                   ]),
               ),
           ]),
+    }),
+    presentationTool({
+      previewUrl: {
+        draftMode: {
+          enable: '/api/draft-mode/enable',
+        },
+      },
     }),
   ],
   document: {

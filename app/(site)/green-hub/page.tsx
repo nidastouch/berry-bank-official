@@ -1,14 +1,18 @@
-import { client, queries } from '@/lib/sanity';
+import { getClient, queries } from '@/lib/sanity';
+import { draftMode } from 'next/headers';
 import { GreenHubPageClient } from './GreenHubPageClient';
 
 export const revalidate = 60;
 
 async function getGreenHubData() {
+  const isDraft = (await draftMode()).isEnabled;
+  const sanity = getClient(isDraft);
+
   try {
     const [greenHub, companyInfo, siteSettings] = await Promise.all([
-      client.fetch(queries.greenHub),
-      client.fetch(queries.companyInfo),
-      client.fetch(queries.siteSettings),
+      sanity.fetch(queries.greenHub),
+      sanity.fetch(queries.companyInfo),
+      sanity.fetch(queries.siteSettings),
     ]);
     return { greenHub, companyInfo, siteSettings };
   } catch (error) {

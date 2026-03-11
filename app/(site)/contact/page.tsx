@@ -1,15 +1,19 @@
-import { client, queries } from '@/lib/sanity';
+import { getClient, queries } from '@/lib/sanity';
+import { draftMode } from 'next/headers';
 import { ContactPageClient } from './ContactPageClient';
 
 export const revalidate = 60;
 
 async function getContactData() {
+  const isDraft = (await draftMode()).isEnabled;
+  const sanity = getClient(isDraft);
+
   try {
     const [contactPage, faqs, companyInfo, siteSettings] = await Promise.all([
-      client.fetch(queries.contactPage),
-      client.fetch(queries.faqs),
-      client.fetch(queries.companyInfo),
-      client.fetch(queries.siteSettings),
+      sanity.fetch(queries.contactPage),
+      sanity.fetch(queries.faqs),
+      sanity.fetch(queries.companyInfo),
+      sanity.fetch(queries.siteSettings),
     ]);
     return { contactPage, faqs, companyInfo, siteSettings };
   } catch (error) {

@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import { Leaf, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { client, queries } from '@/lib/sanity';
+import { getClient, queries } from '@/lib/sanity';
+import { draftMode } from 'next/headers';
 import { PortableText } from 'next-sanity';
 
 export const revalidate = 60;
@@ -60,7 +61,10 @@ const defaultSections = [
 ];
 
 export default async function PrivacyPage() {
-  const data: PrivacyData | null = await client.fetch(queries.privacyPage).catch(() => null);
+  const isDraft = (await draftMode()).isEnabled;
+  const sanity = getClient(isDraft);
+
+  const data: PrivacyData | null = await sanity.fetch(queries.privacyPage).catch(() => null);
 
   const hasCmsContent = data?.sections && data.sections.length > 0;
   const contactEmail = data?.contactEmail || 'contact@berrybank.app';

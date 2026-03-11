@@ -1,12 +1,12 @@
-import { draftMode } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { NextRequest } from 'next/server';
+import { defineEnableDraftMode } from 'next-sanity/draft-mode';
+import { createClient } from 'next-sanity';
 
-export async function GET(request: NextRequest) {
-  const url = new URL(request.url);
-  const redirectTo = url.searchParams.get('redirect') || '/';
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  apiVersion: '2024-01-01',
+  useCdn: false,
+  token: process.env.SANITY_API_TOKEN,
+});
 
-  (await draftMode()).enable();
-
-  redirect(redirectTo);
-}
+export const { GET } = defineEnableDraftMode({ client });
