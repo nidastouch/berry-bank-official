@@ -1,6 +1,8 @@
 import { client, queries } from '@/lib/sanity';
 import { ContactPageClient } from './ContactPageClient';
 
+export const revalidate = 60;
+
 async function getContactData() {
   try {
     const [contactPage, faqs, companyInfo, siteSettings] = await Promise.all([

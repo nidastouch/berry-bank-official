@@ -1,6 +1,8 @@
 import { client, queries } from '@/lib/sanity';
 import { ImpactPageClient } from './ImpactPageClient';
 
+export const revalidate = 60;
+
 async function getImpactData() {
   try {
     const [impactPage, impactSection, companyInfo, siteSettings] = await Promise.all([

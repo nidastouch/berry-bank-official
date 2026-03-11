@@ -11,6 +11,7 @@
   "dependencies": {
     "@sanity/client": "^6.21.0",
     "@sanity/image-url": "^1.0.2",
+    "@sanity/presentation": "^2.0.0",
     "@sanity/ui": "^2.16.22",
     "@stripe/stripe-js": "^4.4.0",
     "@types/recharts": "^1.8.29",

@@ -26,6 +26,8 @@ interface ImpactPageData {
     ctaHeadline?: string;
     ctaSubline?: string;
     ctaButtonText?: string;
+    chartSectionTitle?: string;
+    categoriesSectionTitle?: string;
   } | null;
   impactSection: {
     description?: string;
@@ -41,6 +43,8 @@ interface ImpactPageData {
   } | null;
   siteSettings: {
     footerTagline?: string;
+    footerQuote?: string;
+    footerLinks?: Array<{ label: string; href: string }>;
   } | null;
 }
 
@@ -117,7 +121,7 @@ export function ImpactPageClient({ data }: { data: ImpactPageData }) {
             viewport={{ once: true }}
             className="text-2xl md:text-3xl font-bold text-mist text-center mb-8"
           >
-            How Green Are Berry Bank Members?
+            {ip?.chartSectionTitle || 'How Green Are Berry Bank Members?'}
           </motion.h2>
           <div className="max-w-4xl mx-auto bg-void rounded-2xl p-6 md:p-10">
             <ImpactChart cmsData={data.impactSection} />
@@ -134,7 +138,7 @@ export function ImpactPageClient({ data }: { data: ImpactPageData }) {
           viewport={{ once: true }}
           className="text-2xl md:text-3xl font-bold text-mist text-center mb-12"
         >
-          Where Your Money Goes
+          {ip?.categoriesSectionTitle || 'Where Your Money Goes'}
         </motion.h2>
         
         <div className="max-w-4xl mx-auto space-y-6">
@@ -198,6 +202,8 @@ export function ImpactPageClient({ data }: { data: ImpactPageData }) {
         legalName={data.companyInfo?.legalName}
         legalType={data.companyInfo?.legalType}
         headquarters={data.companyInfo?.headquarters}
+        quote={data.siteSettings?.footerQuote}
+        quickLinks={data.siteSettings?.footerLinks}
       />
     </main>
   );

@@ -1,18 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
   transpilePackages: ['sanity', '@sanity/vision'],
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Suppress specific React warnings from Sanity internals
-      config.resolve.alias = {
-        ...config.resolve.alias,
-      };
-    }
-    return config;
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+        pathname: '/**',
+      },
+    ],
   },
+  // Empty turbopack config to opt into Turbopack (Next.js 16 default)
+  turbopack: {},
 };
 
 export default nextConfig;

@@ -9,31 +9,37 @@ export const greenHub = defineType({
       name: 'embedUrl',
       title: 'Embed URL',
       type: 'url',
-      description: 'URL for the Green Hub iframe embed',
-      initialValue: 'https://greeninitiatives-client-prod-608881704830.us-central1.run.app/',
-      validation: (Rule) => Rule.uri({
-        scheme: ['http', 'https'],
-      }),
+      description: 'URL of the Green Hub web app to embed',
+      validation: (Rule) => Rule.uri({ scheme: ['http', 'https'] }),
     }),
+    defineField({ name: 'title', title: 'Section Title', type: 'string', initialValue: 'Green Hub' }),
+    defineField({ name: 'description', title: 'Description', type: 'text' }),
+    defineField({ name: 'badge', title: 'Badge Text', type: 'string', initialValue: 'Environmental Impact' }),
+    defineField({ name: 'embedUrlBarText', title: 'URL Bar Display Text', type: 'string', initialValue: 'greeninitiatives.berrybank.app', description: 'Text shown in the browser chrome URL bar above the embed' }),
     defineField({
-      name: 'title',
-      title: 'Section Title',
-      type: 'string',
-      description: 'Title for the Green Hub section',
-      initialValue: 'Green Hub',
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      description: 'Brief description of the Green Hub',
+      name: 'features',
+      title: 'Features List',
+      type: 'array',
+      description: 'Feature cards shown below the embed on the Green Hub page',
+      of: [{
+        type: 'object',
+        fields: [
+          defineField({ name: 'icon', title: 'Icon Emoji', type: 'string' }),
+          defineField({ name: 'title', title: 'Title', type: 'string' }),
+          defineField({ name: 'description', title: 'Description', type: 'text' }),
+        ],
+        preview: {
+          select: { title: 'title', subtitle: 'description', media: 'icon' },
+          prepare({ title, subtitle, media }) {
+            return { title: (media || '') + ' ' + (title || ''), subtitle };
+          },
+        },
+      }],
     }),
   ],
   preview: {
     prepare() {
-      return {
-        title: 'Green Hub Settings',
-      };
+      return { title: 'Green Hub Settings' };
     },
   },
 });

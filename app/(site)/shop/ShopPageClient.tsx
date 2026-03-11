@@ -15,6 +15,10 @@ interface ShopPageData {
       title: string;
       description: string;
     }>;
+    shopBadge?: string;
+    shopHeading?: string;
+    shopSubline?: string;
+    comingSoonText?: string;
   } | null;
   products: Array<{
     _id: string;
@@ -34,6 +38,8 @@ interface ShopPageData {
   } | null;
   siteSettings: {
     footerTagline?: string;
+    footerQuote?: string;
+    footerLinks?: Array<{ label: string; href: string }>;
   } | null;
 }
 
@@ -71,7 +77,13 @@ export function ShopPageClient({ data }: { data: ShopPageData }) {
 
       {/* Shop Section */}
       <section className="container mx-auto px-4 pb-24">
-        <ShopSection products={data.products || undefined} />
+        <ShopSection
+          products={data.products || undefined}
+          badge={sp?.shopBadge}
+          heading={sp?.shopHeading}
+          subline={sp?.shopSubline}
+          comingSoonText={sp?.comingSoonText}
+        />
       </section>
 
       {/* Benefits */}
@@ -103,6 +115,8 @@ export function ShopPageClient({ data }: { data: ShopPageData }) {
         legalName={data.companyInfo?.legalName}
         legalType={data.companyInfo?.legalType}
         headquarters={data.companyInfo?.headquarters}
+        quote={data.siteSettings?.footerQuote}
+        quickLinks={data.siteSettings?.footerLinks}
       />
     </main>
   );

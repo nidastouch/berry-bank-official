@@ -6,7 +6,6 @@ import { faq } from './faq';
 import { companyInfo } from './companyInfo';
 import { impactSection } from './impactSection';
 import { feature } from './feature';
-import { aboutPage } from './aboutPage';
 import { siteSettings } from './siteSettings';
 import { contactPage } from './contactPage';
 import { shopPage } from './shopPage';
@@ -21,7 +20,6 @@ export const schemaTypes = [
   greenHub,
   companyInfo,
   impactSection,
-  aboutPage,
   contactPage,
   shopPage,
   impactPage,
@@ -34,14 +32,12 @@ export const schemaTypes = [
   feature,
 ];
 
-// Singleton type names for structure builder
 export const singletonTypes = [
   'siteSettings',
   'homePage',
   'greenHub',
   'companyInfo',
   'impactSection',
-  'aboutPage',
   'contactPage',
   'shopPage',
   'impactPage',

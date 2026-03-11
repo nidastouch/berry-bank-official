@@ -1,23 +1,25 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Leaf } from 'lucide-react';
-import { Newsletter } from '@/components/shop';
+import React from "react";
+import { motion } from "framer-motion";
+import { Leaf } from "lucide-react";
+import { Newsletter } from "@/components/shop";
 
 interface JoinSectionProps {
+  badge?: string;
   headline?: string;
   subline?: string;
   slogan?: string;
   trustBadges?: string[];
 }
 
-const defaultTrustBadges = ['🔒 AES-256 Encryption', '✅ PCI-DSS Compliant', '🌱 100% Carbon Neutral'];
+const defaultTrustBadges = ["\U0001F512 AES-256 Encryption", "\u2705 PCI-DSS Compliant", "\U0001F331 100% Carbon Neutral"];
 
 export function JoinSection({
-  headline = 'Be Part of the Change',
+  badge = "Join the Movement",
+  headline = "Be Part of the Change",
   subline = "Don't choose between a sleek experience and saving the planet.",
-  slogan = 'Bank Green. Live Clean.',
+  slogan = "Bank Green. Live Clean.",
   trustBadges = defaultTrustBadges,
 }: JoinSectionProps) {
   return (
@@ -31,25 +33,15 @@ export function JoinSection({
       >
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-berry/10 border border-berry/20 mb-6">
           <Leaf className="w-4 h-4 text-berry" />
-          <span className="text-sm font-medium text-berry">Join the Movement</span>
+          <span className="text-sm font-medium text-berry">{badge}</span>
         </div>
-
-        <h2 className="text-3xl md:text-5xl font-bold text-mist mb-4">
-          {headline}
-        </h2>
-        
-        <p className="text-mist/60 max-w-xl mx-auto text-lg mb-2">
-          {subline}
-        </p>
-        
-        <p className="text-growth font-semibold">
-          {slogan}
-        </p>
+        <h2 className="text-3xl md:text-5xl font-bold text-mist mb-4">{headline}</h2>
+        <p className="text-mist/60 max-w-xl mx-auto text-lg mb-2">{subline}</p>
+        <p className="text-growth font-semibold">{slogan}</p>
       </motion.div>
 
       <Newsletter />
 
-      {/* Trust badges */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -57,10 +49,10 @@ export function JoinSection({
         transition={{ delay: 0.5 }}
         className="flex flex-wrap justify-center gap-6 mt-12 text-sm text-mist/40"
       >
-        {trustBadges?.map((badge, i) => (
+        {trustBadges?.map((b, i) => (
           <React.Fragment key={i}>
-            {i > 0 && <span>•</span>}
-            <span>{badge}</span>
+            {i > 0 && <span>&bull;</span>}
+            <span>{b}</span>
           </React.Fragment>
         ))}
       </motion.div>

@@ -1,6 +1,8 @@
 import { client, queries } from '@/lib/sanity';
 import { GreenHubPageClient } from './GreenHubPageClient';
 
+export const revalidate = 60;
+
 async function getGreenHubData() {
   try {
     const [greenHub, companyInfo, siteSettings] = await Promise.all([

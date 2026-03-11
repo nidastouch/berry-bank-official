@@ -41,6 +41,8 @@ interface ContactPageData {
   } | null;
   siteSettings: {
     footerTagline?: string;
+    footerQuote?: string;
+    footerLinks?: Array<{ label: string; href: string }>;
   } | null;
 }
 
@@ -126,6 +128,8 @@ export function ContactPageClient({ data }: { data: ContactPageData }) {
         legalName={data.companyInfo?.legalName}
         legalType={data.companyInfo?.legalType}
         headquarters={data.companyInfo?.headquarters}
+        quote={data.siteSettings?.footerQuote}
+        quickLinks={data.siteSettings?.footerLinks}
       />
     </main>
   );

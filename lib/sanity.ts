@@ -5,11 +5,13 @@ import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!;
 
+// useCdn: false ensures we always get fresh data from the Sanity API
+// Combined with Next.js revalidation, this gives us on-demand fresh content
 export const client = createClient({
   projectId,
   dataset,
   apiVersion: '2024-01-01',
-  useCdn: process.env.NODE_ENV === 'production',
+  useCdn: false,
 });
 
 const builder = imageUrlBuilder(client);
@@ -32,7 +34,10 @@ export const queries = {
     footerTagline,
     footerQuote,
     footerLinks,
-    socialLinks
+    socialLinks,
+    metaTitle,
+    metaDescription,
+    metaKeywords
   }`,
 
   homePage: `*[_type == "homePage"][0]{
@@ -42,8 +47,22 @@ export const queries = {
     ctaText,
     heroBadge,
     heroLearnMoreText,
+    featuresHeading,
+    featuresSubline,
+    featuresStats,
     missionSectionTitle,
     missionSectionSubline,
+    missionLabel,
+    visionLabel,
+    coreValuesLabel,
+    impactChartBadge,
+    impactChartHeading,
+    impactChartBottomStat,
+    impactChartBottomSubline,
+    teamHeading,
+    teamSubline,
+    faqHeading,
+    joinBadge,
     joinHeadline,
     joinSubline,
     joinSlogan,
@@ -72,7 +91,10 @@ export const queries = {
   greenHub: `*[_type == "greenHub"][0]{
     embedUrl,
     title,
-    description
+    description,
+    badge,
+    embedUrlBarText,
+    features
   }`,
 
   contactPage: `*[_type == "contactPage"][0]{
@@ -88,7 +110,11 @@ export const queries = {
     badge,
     headline,
     subline,
-    benefits
+    benefits,
+    shopBadge,
+    shopHeading,
+    shopSubline,
+    comingSoonText
   }`,
 
   impactPage: `*[_type == "impactPage"][0]{
@@ -99,7 +125,9 @@ export const queries = {
     projectCategories,
     ctaHeadline,
     ctaSubline,
-    ctaButtonText
+    ctaButtonText,
+    chartSectionTitle,
+    categoriesSectionTitle
   }`,
 
   missionPage: `*[_type == "missionPage"][0]{
@@ -107,7 +135,9 @@ export const queries = {
     headline,
     subline,
     whyChooseHeadline,
-    whyChooseCards
+    whyChooseCards,
+    coreValuesHeading,
+    coreValueEmojis
   }`,
 
   privacyPage: `*[_type == "privacyPage"][0]{

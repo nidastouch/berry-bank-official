@@ -1,6 +1,9 @@
 import { client, queries } from '@/lib/sanity';
 import { HomePageClient } from './HomePageClient';
 
+// Revalidate this page every 60 seconds so Sanity changes appear quickly
+export const revalidate = 60;
+
 // Server component that fetches data
 async function getHomePageData() {
   try {

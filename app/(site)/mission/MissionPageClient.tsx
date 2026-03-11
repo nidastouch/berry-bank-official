@@ -14,6 +14,8 @@ interface MissionPageData {
       title: string;
       description: string;
     }>;
+    coreValuesHeading?: string;
+    coreValueEmojis?: string[];
   } | null;
   companyInfo: {
     name?: string;
@@ -28,6 +30,8 @@ interface MissionPageData {
   } | null;
   siteSettings: {
     footerTagline?: string;
+    footerQuote?: string;
+    footerLinks?: Array<{ label: string; href: string }>;
   } | null;
 }
 
@@ -109,11 +113,13 @@ export function MissionPageClient({ data }: { data: MissionPageData }) {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-3xl font-bold text-mist text-center mb-12"
         >
-          Our Core Values
+          {mp?.coreValuesHeading || 'Our Core Values'}
         </motion.h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
-          {coreValues?.map((value, index) => (
+          {coreValues?.map((value, index) => {
+            const emojis = mp?.coreValueEmojis || ['🌍', '🤝', '💚', '💡', '🌱'];
+            return (
             <motion.div
               key={value}
               initial={{ opacity: 0, y: 20 }}
@@ -123,12 +129,13 @@ export function MissionPageClient({ data }: { data: MissionPageData }) {
             >
               <div className="w-16 h-16 bg-growth/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">
-                  {['🌍', '🤝', '💚', '💡', '🌱'][index] || '✨'}
+                  {emojis[index] || '✨'}
                 </span>
               </div>
               <h3 className="text-xl font-semibold text-mist">{value}</h3>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -164,6 +171,8 @@ export function MissionPageClient({ data }: { data: MissionPageData }) {
         legalName={ci?.legalName}
         legalType={ci?.legalType}
         headquarters={ci?.headquarters}
+        quote={data.siteSettings?.footerQuote}
+        quickLinks={data.siteSettings?.footerLinks}
       />
     </main>
   );

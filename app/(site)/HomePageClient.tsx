@@ -1,78 +1,28 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Hero, GreenHubEmbed, MissionSection, ImpactChart, JoinSection, FooterSection, FeatureGrid, Team, FAQ } from '@/components/modules';
+import { motion } from "framer-motion";
+import {
+  Hero,
+  GreenHubEmbed,
+  MissionSection,
+  ImpactChart,
+  JoinSection,
+  FooterSection,
+  FeatureGrid,
+  Team,
+  FAQ,
+} from "@/components/modules";
 
 interface HomePageData {
-  homePage: {
-    heroHeadline?: string;
-    heroSubline?: string;
-    heroHook?: string;
-    ctaText?: string;
-    heroBadge?: string;
-    heroLearnMoreText?: string;
-    missionSectionTitle?: string;
-    missionSectionSubline?: string;
-    joinHeadline?: string;
-    joinSubline?: string;
-    joinSlogan?: string;
-    trustBadges?: string[];
-  } | null;
-  impactSection: {
-    description?: string;
-    chartData?: Array<{
-      label: string;
-      value: number;
-      color: string;
-    }>;
-  } | null;
-  companyInfo: {
-    name?: string;
-    tagline?: string;
-    mission?: string;
-    vision?: string;
-    coreValues?: string[];
-    contactEmail?: string;
-    legalName?: string;
-    legalType?: string;
-    headquarters?: string;
-  } | null;
-  siteSettings: {
-    footerTagline?: string;
-    footerQuote?: string;
-    footerLinks?: Array<{ label: string; href: string }>;
-  } | null;
-  greenHub: {
-    embedUrl?: string;
-    title?: string;
-    description?: string;
-  } | null;
-  features: Array<{
-    _id: string;
-    title: string;
-    description: string;
-    icon?: string;
-  }> | null;
-  teamMembers: Array<{
-    _id: string;
-    name: string;
-    role: string;
-    image?: any;
-    bio?: string;
-  }> | null;
-  faqs: Array<{
-    _id: string;
-    question: string;
-    answer: string;
-  }> | null;
-  products: Array<{
-    _id: string;
-    title: string;
-    price: number;
-    description?: string;
-    image?: any;
-    stripePriceId?: string;
-  }> | null;
+  homePage: any;
+  impactSection: any;
+  companyInfo: any;
+  siteSettings: any;
+  greenHub: any;
+  features: any;
+  teamMembers: any;
+  faqs: any;
+  products: any;
 }
 
 interface HomePageClientProps {
@@ -89,14 +39,18 @@ const sectionVariants = {
 };
 
 export function HomePageClient({ data }: HomePageClientProps) {
+  const hp = data.homePage || {};
+  const ci = data.companyInfo || {};
+  const ss = data.siteSettings || {};
+
   return (
     <main className="w-full overflow-x-hidden">
-      {/* Section 1: Hero - Full viewport height */}
+      {/* Hero */}
       <section id="hero" data-nav-theme="dark" className="relative min-h-screen w-full">
-        <Hero cmsData={data.homePage} />
+        <Hero cmsData={hp} />
       </section>
 
-      {/* Section 2: Green Hub */}
+      {/* Green Hub */}
       <motion.section
         id="green-hub"
         data-nav-theme="light"
@@ -110,10 +64,12 @@ export function HomePageClient({ data }: HomePageClientProps) {
           embedUrl={data.greenHub?.embedUrl}
           title={data.greenHub?.title}
           description={data.greenHub?.description}
+          badge={data.greenHub?.badge}
+          embedUrlBarText={data.greenHub?.embedUrlBarText}
         />
       </motion.section>
 
-      {/* Section 3: Features */}
+      {/* Features */}
       <motion.section
         id="features"
         data-nav-theme="dark"
@@ -123,10 +79,15 @@ export function HomePageClient({ data }: HomePageClientProps) {
         viewport={{ once: true, amount: 0.15 }}
         className="relative w-full bg-void py-20 md:py-32"
       >
-        <FeatureGrid features={data.features || undefined} />
+        <FeatureGrid
+          features={data.features || undefined}
+          heading={hp.featuresHeading}
+          subline={hp.featuresSubline}
+          stats={hp.featuresStats}
+        />
       </motion.section>
 
-      {/* Section 4: Mission & Vision */}
+      {/* Mission & Vision */}
       <motion.section
         id="mission"
         data-nav-theme="dark"
@@ -137,13 +98,18 @@ export function HomePageClient({ data }: HomePageClientProps) {
         className="relative w-full bg-void py-20 md:py-32"
       >
         <MissionSection
-          mission={data.companyInfo?.mission}
-          vision={data.companyInfo?.vision}
-          coreValues={data.companyInfo?.coreValues}
+          mission={ci.mission}
+          vision={ci.vision}
+          coreValues={ci.coreValues}
+          sectionTitle={hp.missionSectionTitle}
+          sectionSubline={hp.missionSectionSubline}
+          missionLabel={hp.missionLabel}
+          visionLabel={hp.visionLabel}
+          coreValuesLabel={hp.coreValuesLabel}
         />
       </motion.section>
 
-      {/* Section 5: Impact Chart */}
+      {/* Impact Chart */}
       <motion.section
         id="impact"
         data-nav-theme="dark"
@@ -153,10 +119,16 @@ export function HomePageClient({ data }: HomePageClientProps) {
         viewport={{ once: true, amount: 0.15 }}
         className="relative w-full bg-void py-20 md:py-32"
       >
-        <ImpactChart cmsData={data.impactSection} />
+        <ImpactChart
+          cmsData={data.impactSection}
+          badge={hp.impactChartBadge}
+          heading={hp.impactChartHeading}
+          bottomStat={hp.impactChartBottomStat}
+          bottomSubline={hp.impactChartBottomSubline}
+        />
       </motion.section>
 
-      {/* Section 6: Team */}
+      {/* Team */}
       <motion.section
         id="team"
         data-nav-theme="dark"
@@ -168,13 +140,15 @@ export function HomePageClient({ data }: HomePageClientProps) {
       >
         <Team
           members={data.teamMembers || undefined}
-          legalName={data.companyInfo?.legalName}
-          legalType={data.companyInfo?.legalType}
-          headquarters={data.companyInfo?.headquarters}
+          legalName={ci.legalName}
+          legalType={ci.legalType}
+          headquarters={ci.headquarters}
+          heading={hp.teamHeading}
+          subline={hp.teamSubline}
         />
       </motion.section>
 
-      {/* Section 7: FAQ */}
+      {/* FAQ */}
       <motion.section
         id="faq"
         data-nav-theme="dark"
@@ -184,10 +158,10 @@ export function HomePageClient({ data }: HomePageClientProps) {
         viewport={{ once: true, amount: 0.15 }}
         className="relative w-full bg-void py-20 md:py-32 px-4"
       >
-        <FAQ faqs={data.faqs || undefined} />
+        <FAQ faqs={data.faqs || undefined} heading={hp.faqHeading} />
       </motion.section>
 
-      {/* Section 8: Join / Newsletter */}
+      {/* Join / Newsletter */}
       <motion.section
         id="join"
         data-nav-theme="dark"
@@ -198,22 +172,25 @@ export function HomePageClient({ data }: HomePageClientProps) {
         className="relative w-full bg-void py-20 md:py-32"
       >
         <JoinSection
-          headline={data.homePage?.joinHeadline}
-          subline={data.homePage?.joinSubline}
-          slogan={data.homePage?.joinSlogan}
-          trustBadges={data.homePage?.trustBadges ?? undefined}
+          badge={hp.joinBadge}
+          headline={hp.joinHeadline}
+          subline={hp.joinSubline}
+          slogan={hp.joinSlogan}
+          trustBadges={hp.trustBadges ?? undefined}
         />
       </motion.section>
 
-      {/* Section 6: Footer */}
+      {/* Footer */}
       <section id="footer" data-nav-theme="dark">
         <FooterSection
-          companyName={data.companyInfo?.name}
-          tagline={data.siteSettings?.footerTagline || data.companyInfo?.tagline}
-          contactEmail={data.companyInfo?.contactEmail}
-          legalName={data.companyInfo?.legalName}
-          legalType={data.companyInfo?.legalType}
-          headquarters={data.companyInfo?.headquarters}
+          companyName={ci.name}
+          tagline={ss.footerTagline || ci.tagline}
+          contactEmail={ci.contactEmail}
+          legalName={ci.legalName}
+          legalType={ci.legalType}
+          headquarters={ci.headquarters}
+          quote={ss.footerQuote}
+          quickLinks={ss.footerLinks}
         />
       </section>
     </main>

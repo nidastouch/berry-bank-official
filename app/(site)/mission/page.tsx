@@ -1,6 +1,8 @@
 import { client, queries } from '@/lib/sanity';
 import { MissionPageClient } from './MissionPageClient';
 
+export const revalidate = 60;
+
 async function getMissionData() {
   try {
     const [missionPage, companyInfo, siteSettings] = await Promise.all([

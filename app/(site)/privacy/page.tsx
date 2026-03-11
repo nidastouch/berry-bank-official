@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { client, queries } from '@/lib/sanity';
 import { PortableText } from 'next-sanity';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Privacy Policy | Berry Bank',
   description: 'Berry Bank privacy policy and data protection information.',

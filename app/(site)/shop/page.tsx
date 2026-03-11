@@ -1,6 +1,8 @@
 import { client, queries } from '@/lib/sanity';
 import { ShopPageClient } from './ShopPageClient';
 
+export const revalidate = 60;
+
 async function getShopData() {
   try {
     const [shopPage, products, companyInfo, siteSettings] = await Promise.all([

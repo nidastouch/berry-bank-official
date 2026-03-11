@@ -150,6 +150,9 @@ export const siteSettings = defineType({
     }),
 
     // SEO
+    defineField({ name: 'metaTitle', title: 'Default Meta Title', type: 'string', group: 'seo', initialValue: "Berry Bank | Latin America's First Green Digital Bank" }),
+    defineField({ name: 'metaDescription', title: 'Default Meta Description', type: 'text', group: 'seo', initialValue: 'Where your money grows green. Switching to a green bank reduces your carbon footprint by 52.2%.' }),
+    defineField({ name: 'metaKeywords', title: 'Meta Keywords', type: 'array', group: 'seo', of: [{ type: 'string' }] }),
     defineField({
       name: 'ogImage',
       title: 'Default OG Image',
