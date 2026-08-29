@@ -48,11 +48,13 @@ export default function InvestorsPage() {
           <Reveal>
             <div className="rail">
               <p className="label rail-label">{investors.thesis.label}</p>
-              <div>
+              <div className="split">
                 <h2 className="h2 stack-heading">{investors.thesis.heading}</h2>
-                {investors.thesis.body.map((p) => (
-                  <p key={p} className="prose">{p}</p>
-                ))}
+                <div>
+                  {investors.thesis.body.map((p) => (
+                    <p key={p} className="prose">{p}</p>
+                  ))}
+                </div>
               </div>
             </div>
           </Reveal>
@@ -64,12 +66,14 @@ export default function InvestorsPage() {
           <Reveal>
             <div className="rail">
               <p className="label rail-label">{investors.product.label}</p>
-              <div>
+              <div className="split">
                 <h2 className="h2 stack-heading">{investors.product.heading}</h2>
-                <p className="prose">{investors.product.body}</p>
-                <p className="audience-cta">
-                  <Link href="/green-hub" className="link">See the Green Hub</Link>
-                </p>
+                <div>
+                  <p className="prose">{investors.product.body}</p>
+                  <p className="audience-cta">
+                    <Link href="/green-hub" className="link">See the Green Hub</Link>
+                  </p>
+                </div>
               </div>
             </div>
           </Reveal>
@@ -81,7 +85,7 @@ export default function InvestorsPage() {
           <Reveal>
             <div className="rail">
               <p className="label rail-label">{investors.traction.label}</p>
-              <div>
+              <div className="split">
                 <h2 className="h2 stack-heading">{investors.traction.heading}</h2>
                 <p className="prose">{investors.traction.body}</p>
               </div>

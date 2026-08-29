@@ -7,14 +7,20 @@ export function Mark({
   className,
   style,
   title,
+  tight = false,
 }: {
   className?: string;
   style?: React.CSSProperties;
   title?: string;
+  /** Crop the viewBox to the shape's real bounds. The artwork sits inside
+   *  ~20% padding, so at hero scale the untrimmed box positions empty space
+   *  rather than the berry. */
+  tight?: boolean;
 }) {
   return (
     <svg
-      viewBox="0 0 500 500"
+      viewBox={tight ? '94 13 299 456' : '0 0 500 500'}
+      preserveAspectRatio="xMidYMid meet"
       className={className}
       style={style}
       role={title ? 'img' : 'presentation'}

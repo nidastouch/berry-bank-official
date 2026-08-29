@@ -26,7 +26,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <Mark className="hero-mark" />
+        <Mark className="hero-mark" tight />
       </section>
 
       {/* ---------------------------------------------------------------- */}
@@ -37,11 +37,13 @@ export default function HomePage() {
           <Reveal>
             <div className="rail">
               <p className="label rail-label">{home.premise.label}</p>
-              <div>
+              <div className="split">
                 <h2 className="h2 stack-heading">{home.premise.heading}</h2>
-                {home.premise.body.map((p) => (
-                  <p key={p} className="prose">{p}</p>
-                ))}
+                <div>
+                  {home.premise.body.map((p) => (
+                    <p key={p} className="prose">{p}</p>
+                  ))}
+                </div>
               </div>
             </div>
           </Reveal>
@@ -142,7 +144,7 @@ export default function HomePage() {
           <Reveal>
             <div className="rail">
               <p className="label rail-label">{home.direction.label}</p>
-              <div>
+              <div className="split">
                 <h2 className="h2 stack-heading">{home.direction.heading}</h2>
                 <p className="prose">{home.direction.body}</p>
               </div>
@@ -159,7 +161,7 @@ export default function HomePage() {
           <Reveal>
             <div className="rail">
               <p className="label rail-label">{home.team.label}</p>
-              <div>
+              <div className="split">
                 <h2 className="h2 stack-heading">{home.team.heading}</h2>
                 <p className="lead prose">{home.team.body}</p>
               </div>
