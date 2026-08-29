@@ -1,104 +1,71 @@
-# Berry Bank - Latin America's First Green Digital Bank
+# Berry Bank
 
-A modern, production-ready Next.js 15 website for Berry Bank featuring Sanity CMS, Stripe payments, and Resend for newsletters.
+Marketing and information site for Berry Fintech, Inc. (Berry Bank), San Antonio, Texas.
 
-## Tech Stack
+Four pages: home, Green Hub, investors, privacy policy. No CMS, no database, no admin
+login. All copy lives in one TypeScript file.
 
-- **Framework**: Next.js 15 (App Router, Server Actions, TypeScript)
-- **CMS**: Sanity Studio v3
-- **Styling**: Tailwind CSS v3.4+
-- **Animation**: Framer Motion
-- **State**: Zustand
-- **Payments**: Stripe
-- **Email**: Resend
-
-## Getting Started
-
-### 1. Install Dependencies
+## Running it
 
 ```bash
 npm install
-```
-
-### 2. Environment Variables
-
-Create a `.env.local` file with:
-
-```env
-# Sanity CMS
-NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
-NEXT_PUBLIC_SANITY_DATASET=production
-
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-
-# Resend
-RESEND_API_KEY=re_...
-RESEND_AUDIENCE_ID=optional_audience_id
-```
-
-### 3. Run Development Server
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the site.
+Then open http://localhost:3000
 
-### 4. Access Sanity Studio
+## Changing the words on the site
 
-Navigate to [http://localhost:3000/studio](http://localhost:3000/studio) to manage content.
+Everything readable on the site is in **`content/site.ts`**. Edit it, save, commit, push.
+That is the whole workflow. Nobody needs a login.
 
-## Project Structure
+Two rules we hold to in that file:
 
-```
-berry-bank/
-├── app/
-│   ├── (site)/           # Public pages
-│   │   ├── page.tsx      # Home page
-│   │   ├── privacy/      # Privacy policy
-│   │   └── success/      # Checkout success
-│   ├── api/              # API routes
-│   │   ├── newsletter/   # Resend integration
-│   │   └── checkout/     # Stripe checkout
-│   └── studio/           # Sanity Studio
-├── components/
-│   ├── core/             # Layout & navigation
-│   ├── modules/          # Page sections
-│   └── shop/             # E-commerce components
-├── lib/                  # Utilities & configs
-└── sanity/               # Sanity schemas
-```
+1. No number goes on the site unless it is real and we can say where it came from.
+2. Nothing is described as further along than it is. Goals are labelled as goals.
 
-## Design System
+## Changing how it looks
 
-- **Primary (Berry Red)**: `#9E1916`
-- **Accent (Growth Green)**: `#16A075`
-- **Background (Void)**: `#0B0B0B`
-- **Text (Mist)**: `#FAFAFA`
-- **Font**: M PLUS 2
+Every design decision is in **`app/globals.css`**. The tokens at the top control the whole
+site: change `--berry` and the buttons, links, section fields, and the logo mark all follow.
 
-## Features
+- `--paper` `#F4EFED` — page background, a rosy grey rather than a cream
+- `--ink` `#1C1210` — body text, a near-black warmed with the brand hue
+- `--berry` `#9E1916` — the one accent
+- `--growth` `#16A075` — used in exactly one place, the Green Hub live marker
 
-- ✅ Snap-scroll navigation
-- ✅ Reactive pixel background animation
-- ✅ Magnetic buttons & tilt cards
-- ✅ Mobile floating dock
-- ✅ Green Hub iframe embed
-- ✅ E-commerce with cart
-- ✅ Newsletter subscription
-- ✅ FAQ accordion
-- ✅ Team section
-- ✅ Privacy policy page
+Text colors were picked to pass WCAG AA (4.5:1) on both background tones. If you change
+them, check the contrast before shipping.
 
-## Company Info
+Type is Schibsted Grotesk with IBM Plex Mono for labels, amounts, and filing data. Heading
+sizes follow a 1.618 progression: 17px body, 27px h3, 44px h2, 71px display.
 
-**Berry Fintech, Inc.**
-- Delaware C Corp
-- Headquarters: Austin, TX
-- Contact: contact@berrybank.app
+## Email signups
 
-## License
+The form posts to `app/api/newsletter/route.ts`, which adds the person to Resend Contacts
+and sends a welcome email. It needs `RESEND_API_KEY` in `.env.local`. Without the key the
+route accepts the signup and logs it instead of failing, so local development works.
 
-© 2024 Berry Fintech, Inc. All rights reserved.
+Sending from `noreply@berrybank.app` requires the domain to be verified in Resend.
+
+## The Green Hub embed
+
+`/green-hub` shows the live Green Hub (`greenhub.berrybank.app`) in a scaled, non-interactive
+frame, with a button that opens the real site in a new tab.
+
+The frame is deliberately not interactive. The Green Hub's landing screen is a login form,
+and asking people to type a password into a cross-origin iframe is a bad idea: password
+managers will not autofill it, and it teaches users a habit that phishing relies on. If you
+ever make that frame interactive, remove the login screen from it first.
+
+Below 768px the frame is replaced with a link, because the Green Hub is built for a desktop
+viewport and scaling it to phone width makes it unreadable.
+
+## Deploying
+
+Push to `main`. Vercel builds it. Set `RESEND_API_KEY` in the Vercel project's environment
+variables.
+
+## Stack
+
+Next.js 16 (App Router), React 19, TypeScript, Resend. Plain CSS, no framework. 35 packages.

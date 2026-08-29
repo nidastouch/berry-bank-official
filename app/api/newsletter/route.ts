@@ -1,144 +1,146 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Initialize Resend
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-const AGE_RANGES = ['Under 18', '18–24', '25–34', '35–44', '45–54', '55–64', '65+'] as const;
+const FROM = 'Berry Bank <noreply@berrybank.app>';
 
 export async function POST(request: NextRequest) {
+  let payload: Record<string, unknown>;
+
   try {
-    const { firstName, lastName, email, zipCode, phone, ageRange } = await request.json();
-
-    // 1. Validate required fields
-    if (!firstName || !lastName || !email || !ageRange) {
-      return NextResponse.json(
-        { error: 'First name, last name, email, and age range are required.' },
-        { status: 400 }
-      );
-    }
-
-    // 2. Validate Email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
-
-    // 3. Validate age range
-    if (!AGE_RANGES.includes(ageRange)) {
-      return NextResponse.json(
-        { error: 'Invalid age range' },
-        { status: 400 }
-      );
-    }
-
-    // 4. Validate optional phone format (digits, spaces, dashes, parens, plus)
-    if (phone && !/^[\d\s\-().+]+$/.test(phone)) {
-      return NextResponse.json(
-        { error: 'Invalid phone number format' },
-        { status: 400 }
-      );
-    }
-
-    // 5. Check configuration
-    if (!process.env.RESEND_API_KEY) {
-      console.log('Newsletter signup (Resend not configured):', { firstName, lastName, email, zipCode, phone, ageRange });
-      return NextResponse.json({
-        success: true,
-        message: 'Successfully subscribed (Demo Mode)',
-      });
-    }
-
-    // 6. Add to Resend Contacts with metadata
-    try {
-      const { data, error } = await resend!.contacts.create({
-        email,
-        firstName: firstName,
-        lastName: lastName,
-        unsubscribed: false,
-      });
-
-      if (error) {
-        console.error('Resend Contact Error:', error);
-      } else {
-        console.log('Resend Contact Success:', data);
-      }
-    } catch (contactError) {
-      // Don't block the welcome email if contact storage fails
-      console.error('Could not add to contacts:', contactError);
-    }
-
-    // 7. Send Welcome Email
-    await resend!.emails.send({
-      from: 'Berry Bank <noreply@berrybank.app>',
-      to: email,
-      subject: 'Welcome to Berry Bank! 🌱',
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <body style="margin: 0; padding: 0; background-color: #0B0B0B; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-              
-              <!-- Logo / Icon -->
-              <div style="text-align: center; margin-bottom: 30px;">
-                <span style="font-size: 48px;">🌱</span>
-              </div>
-
-              <!-- Headline -->
-              <h1 style="color: #FAFAFA; text-align: center; font-size: 28px; margin: 0 0 8px 0;">
-                Welcome, ${firstName}!
-              </h1>
-              <p style="color: #16A075; text-align: center; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 30px 0;">
-                Latin America's First Green Digital Bank
-              </p>
-
-              <!-- Divider -->
-              <div style="width: 60px; height: 3px; background: linear-gradient(90deg, #9E1916, #16A075); margin: 0 auto 30px auto; border-radius: 2px;"></div>
-
-              <!-- Body -->
-              <p style="color: #FAFAFA; text-align: center; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; opacity: 0.9;">
-                Thank you for joining the green banking movement! You're now on our waitlist and will be among the first to know when we launch.
-              </p>
-
-              <!-- Stat Highlight -->
-              <div style="background-color: rgba(22, 160, 117, 0.1); border: 1px solid rgba(22, 160, 117, 0.2); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 30px;">
-                <p style="color: #FAFAFA; font-size: 14px; margin: 0; opacity: 0.7;">
-                  <strong style="color: #16A075;">Did you know?</strong> Switching to a green bank reduces your carbon footprint by <strong style="color: #16A075;">52.2%</strong>.
-                </p>
-              </div>
-
-              <!-- Divider -->
-              <div style="width: 100%; height: 1px; background-color: rgba(250, 250, 250, 0.1); margin: 30px 0;"></div>
-
-              <!-- Footer -->
-              <p style="color: #FAFAFA; text-align: center; font-size: 12px; opacity: 0.4; margin: 0 0 8px 0;">
-                © ${new Date().getFullYear()} Berry Fintech, Inc. | Austin, TX
-              </p>
-              <p style="text-align: center; margin: 0;">
-                <a href="https://berrybank.app/privacy" style="color: #9E1916; font-size: 12px; text-decoration: none;">Privacy Policy</a>
-              </p>
-
-            </div>
-          </body>
-        </html>
-      `,
-    });
-
-    return NextResponse.json({
-      success: true,
-      message: 'Successfully subscribed to the newsletter!',
-    });
-
-  } catch (error) {
-    console.error('Newsletter subscription error:', error);
-    return NextResponse.json(
-      { error: 'Failed to subscribe. Please try again.' },
-      { status: 500 }
-    );
+    payload = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Send this as JSON.' }, { status: 400 });
   }
+
+  const firstName = String(payload.firstName ?? '').trim();
+  const email = String(payload.email ?? '').trim();
+  const zipCode = String(payload.zipCode ?? '').trim();
+
+  if (!firstName) {
+    return NextResponse.json({ error: 'Add your first name.' }, { status: 400 });
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: 'That email address does not look right.' }, { status: 400 });
+  }
+
+  if (zipCode && !/^\d{5}(-\d{4})?$/.test(zipCode)) {
+    return NextResponse.json({ error: 'Use a five digit ZIP code.' }, { status: 400 });
+  }
+
+  // No key configured — accept the signup rather than showing an error in dev.
+  if (!resend) {
+    console.log('Signup received (Resend not configured):', { firstName, email, zipCode });
+    return NextResponse.json({ success: true });
+  }
+
+  try {
+    const { error: contactError } = await resend.contacts.create({
+      email,
+      firstName,
+      unsubscribed: false,
+    });
+
+    if (contactError) {
+      console.error('Resend contact error:', contactError);
+    }
+  } catch (err) {
+    // A failure to store the contact should not cost the person their welcome email.
+    console.error('Resend contact threw:', err);
+  }
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: email,
+      subject: 'You are on the Berry Bank list',
+      text: [
+        `${firstName},`,
+        '',
+        'Thanks for signing up. Berry Bank builds fundraising tools for individuals and for the organizations working in their neighborhoods.',
+        '',
+        'Our first platform, the Green Hub, is live. It connects local organizations with supporters who want to fund environmental projects in their own community:',
+        'https://berrybank.app/green-hub',
+        '',
+        'We will write when we have released something or opened somewhere new. Not more often than that.',
+        '',
+        'Berry Fintech, Inc.',
+        'San Antonio, Texas',
+        'contact@berrybank.app',
+      ].join('\n'),
+      html: welcomeEmail(firstName),
+    });
+  } catch (err) {
+    console.error('Resend send error:', err);
+    // The person is on the list even if the welcome email bounced off our side.
+    return NextResponse.json({ success: true });
+  }
+
+  return NextResponse.json({ success: true });
+}
+
+function welcomeEmail(firstName: string) {
+  const escape = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  return `<!doctype html>
+<html lang="en">
+  <body style="margin:0;padding:0;background:#F4EFED;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4EFED;">
+      <tr>
+        <td align="center" style="padding:40px 20px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                 style="max-width:520px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1C1210;">
+            <tr>
+              <td style="padding-bottom:28px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#9A8B87;">
+                Berry Bank
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size:26px;line-height:1.2;letter-spacing:-0.02em;font-weight:600;padding-bottom:18px;">
+                ${escape(firstName)}, you are on the list.
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size:16px;line-height:1.6;color:#4A3B38;padding-bottom:16px;">
+                Berry Bank builds fundraising tools for individuals and for the organizations
+                working in their neighborhoods.
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size:16px;line-height:1.6;color:#4A3B38;padding-bottom:28px;">
+                Our first platform, the Green Hub, is live. It connects local organizations with
+                supporters who want to fund environmental projects in their own community.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-bottom:32px;">
+                <a href="https://berrybank.app/green-hub"
+                   style="display:inline-block;background:#9E1916;color:#FBF6F5;text-decoration:none;
+                          padding:13px 22px;border-radius:2px;font-size:15px;font-weight:600;">
+                  See the Green Hub
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top:1px solid #DBD0CC;padding-top:20px;font-size:15px;line-height:1.6;color:#4A3B38;">
+                We will write when we have released something or opened somewhere new.
+                Not more often than that.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-top:28px;font-size:12px;line-height:1.7;color:#9A8B87;">
+                Berry Fintech, Inc.<br />
+                San Antonio, Texas<br />
+                <a href="mailto:contact@berrybank.app" style="color:#9A8B87;">contact@berrybank.app</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
 }
